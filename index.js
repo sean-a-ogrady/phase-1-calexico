@@ -7,6 +7,8 @@ const dishPrice = document.querySelector("#dish-price");
 const cartForm = document.querySelector("#cart-form");
 const numberInCart = document.querySelector("#number-in-cart");
 const cartAmount = document.querySelector("#cart-amount");
+const totalCostContainer = document.createElement("h3");
+const totalCost = document.createElement("span");
 
 // Fetch the menu data
 fetch("http://localhost:3000/menu")
@@ -106,10 +108,29 @@ cartForm.addEventListener('submit', (event) => {
         cart
     */
     const selectedItem = document.querySelector(`#${dishName.class}`);
+    const totalBefore = parseInt(selectedItem["data-count"]);
     // Add the number that the user input to the total in the cart
-    const newTotal = numToAdd + parseInt(selectedItem["data-count"]);
+    const newTotal = numToAdd + totalBefore;
     // Assign the new total to the custom "data-count" property on the span. If less than 0, set 0.
     selectedItem["data-count"] = newTotal >= 0 ? newTotal : 0;
     // Display the new amount of the item in the cart
     numberInCart.textContent = selectedItem["data-count"];
+    
+    if (numToAdd >= 0) {
+        totalCost.textContent = parseInt(totalCost.textContent) + parseInt(dishPrice.textContent.slice(1)) * numToAdd;
+    } else {
+        totalCost.textContent = parseInt(totalCost.textContent) + parseInt(dishPrice.textContent.slice(1)) * (parseInt(selectedItem["data-count"]) - totalBefore);
+    }
 })
+
+// BONUS CHALLENGE 1: The value of the cart should persist when clicking through different menu items
+// Already completed!
+
+// BONUS CHALLENGE 2: Calculate the total cost of what is currently in the cart and display it on page
+totalCostContainer.textContent = `Total Cost: $`;
+totalCost.textContent = 0;
+totalCost.id = "total-cost";
+totalCostContainer.appendChild(totalCost);
+document.querySelector("#dish").append(totalCostContainer);
+
+// BONUS CHALLENGE 3: Use PATCH requests to maintain the value of the cart in-between refreshes
